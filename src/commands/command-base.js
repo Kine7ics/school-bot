@@ -49,9 +49,7 @@ const getPrefix = async (guild) => {
   await mongo().then(async (mongoose) => {
     try {
       await settingsSchema.findOne({ _id: guild.id }).then((settings) => {
-        if (settings != null) {
-          result = settings.commandPrefix;
-        }
+        result = settings.commandPrefix;
       });
     } catch (e) {
       console.error(e);
