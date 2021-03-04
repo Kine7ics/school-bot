@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/bot.js"
+    "start": "node src/bot.js",
+    "build": "echo buildin",
+    "test": "echo testing"
   },
   "keywords": [],
   "author": "",
