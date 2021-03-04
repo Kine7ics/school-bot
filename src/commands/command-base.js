@@ -44,15 +44,20 @@ const getPrefix = async (guild) => {
   const mongo = require("../mongo");
   const settingSchema = require("../schemas/settings-schema");
 
+  let result = "!";
+
   await mongo().then(async (mongoose) => {
     try {
-      const settings = settingSchema.findById(guild.id);
-      console.log(settings);
-      return "!";
+      const settings = await settingSchema.findOne({ _id: guild.id });
+      if (settings != null) {
+        result = settings.commandPrefix;
+      }
     } finally {
       await mongoose.connection.close();
     }
   });
+
+  return result;
 };
 
 module.exports = (client, commandOptions) => {
@@ -81,57 +86,59 @@ module.exports = (client, commandOptions) => {
     validatePermissions(permissions);
   }
 
-  client.on("message", (message) => {
+  client.on("message", async (message) => {
     const { member, content, guild } = message;
 
-    const prefix = getPrefix(guild);
+    await getPrefix(guild).then((prefix) => {
+      for (const alias of commands) {
+        if (
+          content.toLowerCase().startsWith(`${prefix}${alias.toLowerCase()}`)
+        ) {
+          // A command has been ran
 
-    for (const alias of commands) {
-      if (content.toLowerCase().startsWith(`${prefix}${alias.toLowerCase()}`)) {
-        // A command has been ran
-
-        // Ensure the user has the required permission(s)
-        for (const permission of permissions) {
-          if (!member.hasPermission(permission)) {
-            message.reply(permissionError);
-            return;
+          // Ensure the user has the required permission(s)
+          for (const permission of permissions) {
+            if (!member.hasPermission(permission)) {
+              message.reply(permissionError);
+              return;
+            }
           }
-        }
 
-        // Ensure the user has the required role(s)
-        for (const requiredRole of requiredRoles) {
-          const role = guild.roles.cache.find(
-            (role) => role.name === requiredRole
-          );
+          // Ensure the user has the required role(s)
+          for (const requiredRole of requiredRoles) {
+            const role = guild.roles.cache.find(
+              (role) => role.name === requiredRole
+            );
 
-          if (!role || !member.roles.cache.has(role.id)) {
+            if (!role || !member.roles.cache.has(role.id)) {
+              message.reply(
+                `You must have the "${requiredRole}" to use this command.`
+              );
+              return;
+            }
+          }
+
+          const arguments = content.split(/[ ]+/);
+
+          // Remove the first index as this is the command.
+          arguments.shift();
+
+          // Ensure we have the correct number of arguments
+          if (
+            arguments.length < minArgs ||
+            (maxArgs !== null && arguments.length > maxArgs)
+          ) {
             message.reply(
-              `You must have the "${requiredRole}" to use this command.`
+              `Incorrect syntax! Use ${prefix}${alias} ${expectedArgs}`
             );
             return;
           }
-        }
 
-        const arguments = content.split(/[ ]+/);
-
-        // Remove the first index as this is the command.
-        arguments.shift();
-
-        // Ensure we have the correct number of arguments
-        if (
-          arguments.length < minArgs ||
-          (maxArgs !== null && arguments.length > maxArgs)
-        ) {
-          message.reply(
-            `Incorrect syntax! Use ${prefix}${alias} ${expectedArgs}`
-          );
+          // Handle the custom command code.
+          callback(message, arguments, arguments.join(" "));
           return;
         }
-
-        // Handle the custom command code.
-        callback(message, arguments, arguments.join(" "));
-        return;
       }
-    }
+    });
   });
 };
