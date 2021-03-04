@@ -42,16 +42,19 @@ const validatePermissions = (permissions) => {
 
 const getPrefix = async (guild) => {
   const mongo = require("../mongo");
-  const settingSchema = require("../schemas/settings-schema");
+  const settingsSchema = require("../schemas/settings-schema");
 
   let result = "!";
 
   await mongo().then(async (mongoose) => {
     try {
-      const settings = await settingSchema.findOne({ _id: guild.id });
-      if (settings != null) {
-        result = settings.commandPrefix;
-      }
+      await settingsSchema.findOne({ _id: guild.id }).then((settings) => {
+        if (settings != null) {
+          result = settings.commandPrefix;
+        }
+      });
+    } catch (e) {
+      console.error(e);
     } finally {
       await mongoose.connection.close();
     }
