@@ -6,6 +6,8 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
+const createVC = require("./CreateVC");
+
 client.on("ready", async () => {
   console.log(`Logged in as ${client.user.tag}!`);
 
@@ -26,6 +28,8 @@ client.on("ready", async () => {
   };
 
   readCommands("commands");
+
+  createVC(client);
 });
 
 client.login(process.env.DISCORD_TOKEN);
