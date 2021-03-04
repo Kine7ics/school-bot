@@ -5,8 +5,8 @@ module.exports = {
   minArgs: 1,
   maxArgs: 1,
   callback: async (message, arguments) => {
-    const mongo = require("../mongo"),
-      settingSchema = require("../schemas/settings-schema");
+    const mongo = require("../../mongo"),
+      settingSchema = require("../../schemas/settings-schema");
 
     const { guild } = message;
     const newPrefix = arguments[0];

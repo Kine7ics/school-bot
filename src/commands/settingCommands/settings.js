@@ -4,8 +4,8 @@ module.exports = {
   maxArgs: 0,
   permissionError: "You need admin permissions to run this command",
   callback: async (message) => {
-    const mongo = require("../mongo"),
-      settingSchema = require("../schemas/settings-schema");
+    const mongo = require("../../mongo"),
+      settingSchema = require("../../schemas/settings-schema");
 
     const { author, guild } = message;
 
