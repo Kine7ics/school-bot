@@ -6,18 +6,12 @@ async function listAllCommands(message) {
   let commandList = "";
 
   for (const command of commandDescriptions) {
-    let {
-      commands,
-      requiredRoles,
-      requiredPermissions,
-      expectedArgs,
-      description,
-    } = command;
+    let { commands, requiredRoles, requiredPermissions, description } = command;
 
     if (!requiredRoles.every((role) => roles.cache.has(role))) continue;
     if (!(await permissions.has(requiredPermissions))) continue;
 
-    commandList += `\n[${commands}] ${expectedArgs}: ${description}`;
+    commandList += `\n[${commands}]: ${description}`;
   }
   message.reply(`Your available commands are:${commandList}`);
 }
@@ -55,6 +49,7 @@ async function describeCommand(message, argument) {
 module.exports = {
   commands: ["help", "commandList"],
   maxArgs: 1,
+  expectedArgs: "?<command>",
   callback: (message, arguments) => {
     if (arguments.length !== 0) {
       describeCommand(message, arguments[0]);
@@ -62,5 +57,6 @@ module.exports = {
     }
     listAllCommands(message);
   },
-  description: "",
+  description:
+    "prints list of your available commands, if you pass in another command it prints that command's usage",
 };
