@@ -6,10 +6,11 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-const createVC = require("./CreateVC");
+const createVC = require("./createVC");
+const { createHelpDescription } = require("./createHelpDescriptions");
 
 client.on("ready", async () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`${client.user.tag} is ready!`);
 
   const baseFile = "command-base.js";
   const commandBase = require(`./commands/${baseFile}`);
@@ -22,14 +23,18 @@ client.on("ready", async () => {
         readCommands(path.join(dir, file));
       } else if (file !== baseFile) {
         const option = require(path.join(__dirname, dir, file));
-        commandBase(client, option);
+        let helpInfo = commandBase(client, option);
+        createHelpDescription(option, helpInfo);
       }
     }
   };
 
   readCommands("commands");
 
-  createVC(client);
+  // Activate all features.
+  createVC(client); // Activates join for VC feature.
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN).then(() => {
+  console.log(`Logged in as ${client.user.tag}`);
+});

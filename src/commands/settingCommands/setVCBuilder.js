@@ -33,4 +33,5 @@ module.exports = {
     });
   },
   permissions: ["ADMINISTRATOR"],
+  description: "",
 };
