@@ -30,4 +30,5 @@ module.exports = {
     });
   },
   permissions: ["ADMINISTRATOR"],
+  description: "changes the command prefix.",
 };

@@ -64,7 +64,7 @@ const getPrefix = async (guild) => {
 module.exports = (client, commandOptions) => {
   let {
     commands,
-    expectedArgs,
+    expectedArgs = "",
     permissionError = "you do not have permission to run this command",
     minArgs = 0,
     maxArgs = null,
@@ -142,4 +142,11 @@ module.exports = (client, commandOptions) => {
       }
     });
   });
+
+  return {
+    requiredRoles: requiredRoles,
+    commands: commands,
+    requiredPermissions: permissions,
+    expectedArgs: expectedArgs,
+  };
 };
