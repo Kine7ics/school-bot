@@ -35,5 +35,5 @@ module.exports = {
     });
   },
   permissions: ["ADMINISTRATOR"],
-  description: "",
+  description: "gives the server's settings",
 };

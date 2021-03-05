@@ -33,5 +33,5 @@ module.exports = {
     });
   },
   permissions: ["ADMINISTRATOR"],
-  description: "",
+  description: "sets the Build a VC channel",
 };
