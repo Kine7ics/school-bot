@@ -1,7 +1,6 @@
 module.exports = {
   commands: ["ping"],
-  callback: (message, arguments, text) => {
+  callback: (message) => {
     message.reply("Pong!");
   },
-  permissions: ["ADMINISTRATOR"],
 };
