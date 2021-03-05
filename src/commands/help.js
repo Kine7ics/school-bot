@@ -14,8 +14,12 @@ async function listAllCommands(message) {
       description,
     } = command;
 
+    console.log(permissions);
+    console.log(requiredPermissions);
+    console.log(permissions.any(requiredPermissions));
+
     if (!requiredRoles.every((role) => roles.cache.has(role))) continue;
-    if (!(await permissions.any(requiredPermissions))) continue;
+    if (!(await permissions.has(requiredPermissions))) continue;
 
     commandList += `\n[${commands}] ${expectedArgs}: ${description}`;
   }
