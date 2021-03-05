@@ -14,10 +14,6 @@ async function listAllCommands(message) {
       description,
     } = command;
 
-    console.log(permissions);
-    console.log(requiredPermissions);
-    console.log(permissions.any(requiredPermissions));
-
     if (!requiredRoles.every((role) => roles.cache.has(role))) continue;
     if (!(await permissions.has(requiredPermissions))) continue;
 
@@ -26,7 +22,35 @@ async function listAllCommands(message) {
   message.reply(`Your available commands are:${commandList}`);
 }
 
-function describeCommand(message, argument) {}
+async function describeCommand(message, argument) {
+  let { permissions, roles } = message.member;
+
+  const command = commandDescriptions.find((command) =>
+    command.commands.includes(argument)
+  );
+
+  if (command) {
+    let {
+      requiredRoles,
+      requiredPermissions,
+      expectedArgs,
+      description,
+    } = command;
+
+    if (
+      requiredRoles.every((role) => roles.cache.has(role)) &&
+      (await permissions.has(requiredPermissions))
+    ) {
+      message.reply(`Usage: ${argument} ${expectedArgs} (${description})`);
+      return;
+    }
+
+    message.reply("You don't have access to that command.");
+    return;
+  }
+
+  message.reply("That isn't a command");
+}
 
 module.exports = {
   commands: ["help", "commandList"],
